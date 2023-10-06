@@ -22,7 +22,8 @@ int main()
     {
         printf("1 - Adicionar contatos\n");
         printf("2 - Lista de contatos\n");
-        printf("3 - Fechar lista\n");
+        printf("3 - Editar contatos\n");
+        printf("4 - Fechar programa\n");
         scanf("%d", &opcao);
 
         switch (opcao)
@@ -41,9 +42,11 @@ int main()
         case 2:
             listacontato();
             break;
+        case 3:
+            editarcontato();
         }
 
-    } while (opcao != 3);
+    } while (opcao != 4);
 
     system("cls");
     printf("\nLista fechada\n");
@@ -93,27 +96,46 @@ void listacontato()
 
 void editarcontato()
 {
-    char edit;
+    char nome_editar[50];
+    int encontrado = 0;
+
     system("cls");
-    printf("digite o nome do contato\n");
-    scanf("%s", add.nome);
-    printf("editar contato");
-    printf("Nome: %s", add.nome);
-    prinft("Numero: %d", add.numero);
-    scanf("%c", &edit);
-    if (edit == 'nome')
+    printf("Digite o nome do contato a ser editado: ");
+    scanf("%s", nome_editar);
+
+    for (int i = 0; i < 1000; i++)
     {
-        printf("digite o nome: ");
-        scanf("%s", add.nome);
-    }
-    if (edit == 'numero')
-    {
-        prinft("digite o numero: ");
-        scanf("%d", add.numero);
-    }
-    else
-        (edit !'nome' || !'numero')
+        if (strcmp(add[i].nome, nome_editar) == 0)
         {
-            printf("erro tente novamente");
+            encontrado = 1;
+            printf("Contato encontrado:\n");
+            printf("Nome: %s\n", add[i].nome);
+            printf("Numero: %d\n", add[i].numero);
+
+            char opcao[50];
+            printf("O que você deseja editar (nome, numero)? ");
+            scanf("%s", opcao);
+
+            if (strcmp(opcao, "nome") == 0)
+            {
+                printf("Dentro if nome\n");
+                printf("Digite o novo nome: ");
+                scanf("%s", add[i].nome);
+            }
+            else if (strcmp(opcao, "numero") == 0)
+            {
+                printf("Digite o novo numero: ");
+                scanf("%d", &add[i].numero);
+            }
+            else
+            {
+                printf("Opção inválida.\n");
+            }
         }
+    }
+
+    if (!encontrado)
+    {
+        printf("Contato não encontrado.\n");
+    }
 }
