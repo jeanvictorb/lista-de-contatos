@@ -3,13 +3,12 @@
 #include <string.h>
 #define MAX_CONTATOS 1000
 
-
 typedef struct
 {
     char nome[50];
     int numero;
     char endereco[50];
-} Contato;
+} *Contato;
 
 Contato contatos[MAX_CONTATOS];
 
@@ -72,12 +71,12 @@ void addcontato()
     {
         printf("\nNome: ");
         fflush(stdin);
-        gets(contatos[numContatos].nome);
+        gets(contatos[numContatos]->nome);
         printf("\nNumero: ");
-        scanf("%d", &contatos[numContatos].numero);
+        scanf("%d", &contatos[numContatos]->numero);
         printf("\nEndereco: ");
         fflush(stdin);
-        gets(contatos[numContatos].endereco);
+        gets(contatos[numContatos]->endereco);
         numContatos++;
     }
     else
@@ -98,8 +97,8 @@ void listacontato()
     printf("......lista de contatos......\n");
     for (int i = 0; i < numContatos; i++)
     {
-        printf("Nome: %s\n", contatos[i].nome);
-        printf("Numero: %d\n", contatos[i].numero);
+        printf("Nome: %s\n", contatos[i]->nome);
+        printf("Numero: %d\n", contatos[i]->numero);
     }
 }
 
@@ -114,13 +113,13 @@ void editarcontato()
 
     for (int i = 0; i < numContatos; i++)
     {
-        if (strcmp(contatos[i].nome, nome_editar) == 0)
+        if (strcmp(contatos[i]->nome, nome_editar) == 0)
         {
             encontrado = 1;
             printf("Contato encontrado:\n");
-            printf("Nome: %s\n", contatos[i].nome);
-            printf("Numero: %d\n", contatos[i].numero);
-            printf("Endereco: %s\n", contatos[i].endereco);
+            printf("Nome: %s\n", contatos[i]->nome);
+            printf("Numero: %d\n", contatos[i]->numero);
+            printf("Endereco: %s\n", contatos[i]->endereco);
 
             char opcao[50];
             printf("O que você deseja editar (nome, numero, endereco)? ");
@@ -129,17 +128,17 @@ void editarcontato()
             if (strcmp(opcao, "nome") == 0)
             {
                 printf("Digite o novo nome: ");
-                scanf("%s", contatos[i].nome);
+                scanf("%s", contatos[i]->nome);
             }
             else if (strcmp(opcao, "numero") == 0)
             {
                 printf("Digite o novo numero: ");
-                scanf("%d", &contatos[i].numero);
+                scanf("%d", &contatos[i]->numero);
             }
             else if (strcmp(opcao, "endereco") == 0)
             {
                 printf("Digite o novo endereco: ");
-                scanf("%s", contatos[i].endereco);
+                scanf("%s", contatos[i]->endereco);
             }
             else
             {
@@ -172,15 +171,15 @@ void excluircontato()
 
     for (int i = 0; i < numContatos; i++)
     {
-        if (strcmp(nome_close, contatos[i].nome) == 0)
+        if (strcmp(nome_close, contatos[i]->nome) == 0)
         {
-            printf("\nDeseja excluir %s? (excluir/cancelar):", contatos[i].nome);
+            printf("\nDeseja excluir %s? (excluir/cancelar):", contatos[i]->nome);
             scanf("%s", excluir);
             if (strcmp(excluir, "excluir") == 0)
             {
-                strcpy(contatos[i].nome, "");
-                contatos[i].numero = 0;
-                strcpy(contatos[i].endereco, "");
+                strcpy(contatos[i]->nome, "");
+                contatos[i]->numero = 0;
+                strcpy(contatos[i]->endereco, "");
                 printf("Contato excluído!\n");
                 encontrar = 1;
                 break;
