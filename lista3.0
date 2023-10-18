@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #define MAX_CONTATOS 1000
 
 typedef struct
@@ -8,9 +9,9 @@ typedef struct
     char nome[50];
     int numero;
     char endereco[50];
-} *Contato;
+} Contato;
 
-Contato contatos[MAX_CONTATOS];
+Contato *contatos[MAX_CONTATOS]; // Agora é um array de ponteiros para Contato
 
 int numContatos = 0;
 
@@ -18,6 +19,7 @@ void addcontato();
 void listacontato();
 void editarcontato();
 void excluircontato();
+void liberarContato(int jeanpiere[]); // Função para liberar a memória alocada
 
 int main()
 {
@@ -56,7 +58,10 @@ int main()
             excluircontato();
             break;
         }
-    } while (opcao != 5);
+    }
+    while (opcao != 5);
+
+    liberarContato(contatos); // Liberar memória alocada antes de encerrar o programa
 
     printf("\nLista fechada\n");
 
@@ -69,6 +74,7 @@ void addcontato()
     printf("........ADICIONAR CONTATO........\n");
     if (numContatos < MAX_CONTATOS)
     {
+        contatos[numContatos] = (Contato *)malloc(sizeof(Contato));
         printf("\nNome: ");
         fflush(stdin);
         gets(contatos[numContatos]->nome);
@@ -99,6 +105,7 @@ void listacontato()
     {
         printf("Nome: %s\n", contatos[i]->nome);
         printf("Numero: %d\n", contatos[i]->numero);
+        printf("Endereco: %s\n", contatos[i]->endereco);
     }
 }
 
@@ -177,28 +184,37 @@ void excluircontato()
             scanf("%s", excluir);
             if (strcmp(excluir, "excluir") == 0)
             {
-                strcpy(contatos[i]->nome, "");
-                contatos[i]->numero = 0;
-                strcpy(contatos[i]->endereco, "");
+                liberarContato(contatos[i]); // Correção: chame liberarContato para liberar a memória de um único contato
+                for (int j = i; j < numContatos - 1; j++)
+                {
+                    contatos[j] = contatos[j + 1]; // Move os contatos restantes
+                }
+                numContatos--;
                 printf("Contato excluído!\n");
                 encontrar = 1;
                 break;
             }
-            else if (strcmp(excluir, "cancelar") == 0)
-            {
-                printf("Cancelado.\n");
-                encontrar = 1;
-                break;
-            }
-            else
-            {
-                printf("Resposta inválida. Digite 'excluir' ou 'cancelar'.\n");
-            }
+        }
+        else if (strcmp(excluir, "cancelar") == 0)
+        {
+            printf("Cancelado.\n");
+            encontrar = 1;
+            break;
+        }
+        else
+        {
+            printf("Resposta inválida. Digite 'excluir' ou 'cancelar'.\n");
         }
     }
-
     if (!encontrar)
     {
         printf("Contato não encontrado.\n");
+    }
+}
+void liberarContato(int jeanpiere[])
+{
+    for (int i = 0; i < numContatos; i++)
+    {
+        free(contatos[i]); // Libera a memória de cada contato
     }
 }
