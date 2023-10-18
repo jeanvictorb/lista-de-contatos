@@ -1,0 +1,219 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct
+{
+    char nome[50];
+    int numero;
+    char endereco[50];
+} Contato;
+
+Contato *contatos[100]; // Agora é um array de ponteiros para Contato
+int numContatos = 0;
+
+FILE *arq;
+
+void addcontato();
+void listacontato();
+void editarcontato();
+void excluircontato();
+void liberarContato();
+
+int main()
+{
+    int opcao;
+
+    printf("......Lista de contatos......\n");
+
+    do
+    {
+        printf("1 - Adicionar contatos\n");
+        printf("2 - Lista de contatos\n");
+        printf("3 - Editar contatos\n");
+        printf("4 - Excluir contato\n");
+        printf("5 - Fechar programa\n");
+        scanf("%d", &opcao);
+
+        switch (opcao)
+        {
+        case 1:
+            if (numContatos < 100)
+            {
+                addcontato();
+            }
+            else
+            {
+                printf("Lista de contatos está cheia.\n");
+            }
+            break;
+        case 2:
+            listacontato();
+            break;
+        case 3:
+            editarcontato();
+            break;
+        case 4:
+            excluircontato();
+            break;
+        }
+    } while (opcao != 5);
+
+    liberarContato(); // Liberar memória alocada antes de encerrar o programa
+
+    printf("\nLista fechada\n");
+
+    return 0;
+}
+
+void addcontato()
+{
+    system("cls");
+    printf("........ADICIONAR CONTATO........\n");
+    if (numContatos < 100)
+    {
+        contatos[numContatos] = (Contato *)malloc(sizeof(Contato));
+        printf("\nNome: ");
+        fflush(stdin);
+        gets(contatos[numContatos]->nome);
+        printf("\nNumero: ");
+        scanf("%d", &contatos[numContatos]->numero);
+        printf("\nEndereco: ");
+        fflush(stdin);
+        gets(contatos[numContatos]->endereco);
+        numContatos++;
+    }
+    else
+    {
+        printf("Lista de contatos está cheia.\n");
+    }
+}
+
+void listacontato()
+{
+    system("cls");
+    if (numContatos == 0)
+    {
+        printf("Nenhum contato para listar.\n");
+        return;
+    }
+
+    printf("......lista de contatos......\n");
+    for (int i = 0; i < numContatos; i++)
+    {
+        printf("Nome: %s\n", contatos[i]->nome);
+        printf("Numero: %d\n", contatos[i]->numero);
+        printf("Endereco: %s\n", contatos[i]->endereco);
+    }
+}
+
+void editarcontato()
+{
+    char nome_editar[50];
+    int encontrado = 0;
+
+    system("cls");
+    printf("Digite o nome do contato a ser editado: ");
+    scanf("%s", nome_editar);
+
+    for (int i = 0; i < numContatos; i++)
+    {
+        if (strcmp(contatos[i]->nome, nome_editar) == 0)
+        {
+            encontrado = 1;
+            printf("Contato encontrado:\n");
+            printf("Nome: %s\n", contatos[i]->nome);
+            printf("Numero: %d\n", contatos[i]->numero);
+            printf("Endereco: %s\n", contatos[i]->endereco);
+
+            char opcao[50];
+            printf("O que você deseja editar (nome, numero, endereco)? ");
+            scanf("%s", opcao);
+
+            if (strcmp(opcao, "nome") == 0)
+            {
+                printf("Digite o novo nome: ");
+                scanf("%s", contatos[i]->nome);
+            }
+            else if (strcmp(opcao, "numero") == 0)
+            {
+                printf("Digite o novo numero: ");
+                scanf("%d", &contatos[i]->numero);
+            }
+            else if (strcmp(opcao, "endereco") == 0)
+            {
+                printf("Digite o novo endereco: ");
+                scanf("%s", contatos[i]->endereco);
+            }
+            else
+            {
+                printf("Opção inválida.\n");
+            }
+        }
+    }
+
+    if (!encontrado)
+    {
+        printf("Contato não encontrado.\n");
+    }
+}
+
+void excluircontato()
+{
+    char nome_close[100];
+    char excluir[10];
+    system("cls");
+    if (numContatos == 0)
+    {
+        printf("Nenhum contato para excluir.\n");
+        return;
+    }
+
+    printf("Qual contato deseja excluir? ");
+    scanf("%s", nome_close);
+
+    int encontrar = 0;
+
+    for (int i = 0; i < numContatos; i++)
+    {
+        if (strcmp(nome_close, contatos[i]->nome) == 0)
+        {
+            printf("\nDeseja excluir %s? (excluir/cancelar):", contatos[i]->nome);
+            scanf("%s", excluir);
+            if (strcmp(excluir, "excluir") == 0)
+            {
+                free(contatos[i]); // Libera a memória do contato a ser excluído
+                for (int j = i; j < numContatos - 1; j++)
+                {
+                    contatos[j] = contatos[j + 1]; // Move os contatos restantes
+                }
+                numContatos--;
+                printf("Contato excluído!\n");
+                encontrar = 1;
+                break;
+            }
+            else if (strcmp(excluir, "cancelar") == 0)
+            {
+                printf("Cancelado.\n");
+                encontrar = 1;
+                break;
+            }
+            else
+            {
+                printf("Resposta inválida. Digite 'excluir' ou 'cancelar'.\n");
+            }
+        }
+    }
+    if (!encontrar)
+    {
+        printf("Contato não encontrado.\n");
+    }
+}
+
+void liberarContato()
+{
+    for (int i = 0; i < numContatos; i++)
+    {
+        free(contatos[i]); // Libera a memória de cada contato
+    }
+}
